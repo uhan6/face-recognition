@@ -9,6 +9,7 @@ int face_recognition();
 
 int main(void)
 {
+	// ≤‚ ‘≈‰÷√ª∑æ≥
 	/*String filePath = "D:/Program Files/opencv/sources/samples/data/lena.jpg";
 	Mat img = imread(filePath);
 	imshow("lena", img);

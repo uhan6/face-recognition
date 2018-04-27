@@ -31,28 +31,40 @@ namespace my_ocv_project_common_180418 {
 		// 反序列化
 		int un_serialization();
 
+		// 得到人物数量
 		int get_num();
 
+		// 设置人物数量
 		void set_num(int num);
 
+		// 通过人物名字得到人物的分类id
 		int get_id(string name);
 
+		// 设置人物的分类id
 		string get_name(int id);
 
+		// 得到一个人物的图片index，从1开始
 		int get_index(string name);
 
+		// 设置一个人物的图片index
 		int set_index(string name, int index);
 
+		// 是否存在人物的名字
 		int is_exist_name(string name);
 
+		// 是否存在此分类id
 		int is_exist_id(int id);
 
+		// 人物，key:id val:name 键值对
 		map<int, string>& get_id_name();
 
+		// 人物名字和图片index
 		map<string, int>& get_name_index();
 
+		// 照片路径和标签
 		vector<string>& get_img_lb();
 
+		// cascade 模板文件路径
 		string get_cascade_path();
 
 	private:

@@ -115,8 +115,8 @@ int train_model() {
 	//cout << "faces size  " << images.size() << "labels size  " << labels.size() << endl;
 
 	// 训练模型
-	Ptr<EigenFaceRecognizer> eigen_model = EigenFaceRecognizer::create();
-	Ptr<FisherFaceRecognizer> fisher_model = FisherFaceRecognizer::create();
+	Ptr<EigenFaceRecognizer> eigen_model = EigenFaceRecognizer::create(Com::INS()->get_num());
+	Ptr<FisherFaceRecognizer> fisher_model = FisherFaceRecognizer::create(Com::INS()->get_num());
 	Ptr<LBPHFaceRecognizer> lbphf_model = LBPHFaceRecognizer::create();
 
 	eigen_model->train(images, labels);
