@@ -117,18 +117,21 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="go88_lib.h" />
-    <ClInclude Include="my_proto.MsgCom.pb.h" />
+    <ClInclude Include="proj_com.h" />
+    <ClInclude Include="tinyxml2.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="go88_lib.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="my_proto.MsgCom.pb.cpp" />
-    <ClCompile Include="opcv_fr_check_face.cpp" />
-    <ClCompile Include="opcv_fr_create_face.cpp" />
-    <ClCompile Include="opcv_fr_main.cpp" />
-    <ClCompile Include="opcv_test_capture.cpp" />
-    <ClCompile Include="opcv_test_face.cpp" />
-    <ClCompile Include="opcv_test_video.cpp" />
+    <ClCompile Include="fr_check_face.cpp" />
+    <ClCompile Include="fr_create_face.cpp" />
+    <ClCompile Include="fr_main.cpp" />
+    <ClCompile Include="proj_com.cpp" />
+    <ClCompile Include="test_capture.cpp" />
+    <ClCompile Include="test_face.cpp" />
+    <ClCompile Include="test_video.cpp" />
+    <ClCompile Include="tinyxml2.cpp" />
+    <ClCompile Include="xmltest.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

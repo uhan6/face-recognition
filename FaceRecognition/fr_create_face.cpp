@@ -1,12 +1,13 @@
 ﻿#include "opencv2/opencv.hpp"
 #include "opencv2/face.hpp"
 
+#include "proj_com.h"
 #include "go88_lib.h"
 
 using namespace std;
 using namespace cv;
 using namespace cv::face;
-using namespace my_ocv_project_common_180418;
+using namespace project_common;
 
 
 int train_model();
@@ -70,6 +71,7 @@ int create_new_face() {
 
 			// 存储人脸照片
 			imwrite(faces_path, faces[0]);
+			Com::INS()->set_index(name, i+1);
 
 			// 存储标签
 			Com::INS()->get_img_lb().push_back(faces_path + ";" + to_string(Com::INS()->get_id(name)));

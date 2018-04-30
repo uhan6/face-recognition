@@ -1,10 +1,11 @@
 #include "opencv2/opencv.hpp"
 
+#include "proj_com.h"
 #include "go88_lib.h"
 
 using namespace cv;
 using namespace std;
-using namespace my_ocv_project_common_180418;
+using namespace project_common;
 
 int create_new_face();
 int check_face();
@@ -14,8 +15,8 @@ int init() {
 	{
 		using namespace go88;
 		// 如果路径不存在，创建目录，把默认INS进行序列化 存储
-		if (!Utils::IS_EXIST_PATH(Com::PROTO_PATH)) {
-			Utils::CREATE_FOLDER(Utils::GET_FOLDER(Com::PROTO_PATH));
+		if (!Utils::IS_EXIST_PATH(Com::SERIALIZATION_PATH)) {
+			Utils::CREATE_FOLDER(Utils::GET_FOLDER(Com::SERIALIZATION_PATH));
 			Com::INS()->serialization();
 		}
 		else {

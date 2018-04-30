@@ -3,12 +3,13 @@
 #include <windows.h>
 #include <thread>
 
+#include "proj_com.h"
 #include "go88_lib.h"
 
 using namespace cv;
 using namespace std;
 using namespace cv::face;
-using namespace my_ocv_project_common_180418;
+using namespace project_common;
 
 
 struct ThreadParm

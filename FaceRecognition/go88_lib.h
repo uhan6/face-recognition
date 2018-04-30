@@ -1,100 +1,13 @@
-#ifndef GO88_LIB_H
-#define GO88_LIB_H
+#pragma once
 
 #include "opencv2/opencv.hpp"
 #include <iostream>
-#include <fstream>
 #include <io.h>
 
-#include "my_proto.MsgCom.pb.h"
 
 using namespace cv;
 using namespace std;
 
-
-namespace my_ocv_project_common_180418 {
-
-
-	// Common 公共的环境常量和变量
-	class Com {
-	public:
-		// 得到 instance 实例 单例模式
-		static Com* INS();
-
-		// 序列化路径
-		static const string PROTO_PATH;
-		// 人脸图片路径
-		static const string FACES_FOLDER;
-
-		// 序列化 路径为 PROTOPATH
-		int serialization();
-		// 反序列化
-		int un_serialization();
-
-		// 得到人物数量
-		int get_num();
-
-		// 设置人物数量
-		void set_num(int num);
-
-		// 通过人物名字得到人物的分类id
-		int get_id(string name);
-
-		// 设置人物的分类id
-		string get_name(int id);
-
-		// 得到一个人物的图片index，从1开始
-		int get_index(string name);
-
-		// 设置一个人物的图片index
-		int set_index(string name, int index);
-
-		// 是否存在人物的名字
-		int is_exist_name(string name);
-
-		// 是否存在此分类id
-		int is_exist_id(int id);
-
-		// 人物，key:id val:name 键值对
-		map<int, string>& get_id_name();
-
-		// 人物名字和图片index
-		map<string, int>& get_name_index();
-
-		// 照片路径和标签
-		vector<string>& get_img_lb();
-
-		// cascade 模板文件路径
-		string get_cascade_path();
-
-	private:
-		//单例模式构造函数私有
-		Com();
-
-		// 单例实例指针
-		static Com* _instance;
-
-		// 人物数量
-		// 序列化：proto  int32
-		int _int_num;
-
-		// 人物名字，key:id val:name 键值对
-		// 序列化：proto 中用一个string储存 "{0;id0}{1;id1}{2;id2}"
-		map<int, string> _map_id_name;
-
-		// 人物名字和图片数量，key:name val:index 目录下面最后一张图片的序号
-		// 序列化：proto 中用一个string储存 "{name0;8}{name1;3}{name2;9}"
-		map<string, int> _map_name_index;
-
-		// 照片路径和标签 img1;0
-		// 序列化：proto 中用一个string储存 "{img1;0}{img2;0}{img3;1}"
-		vector<string> _vct_images_labels;
-
-		// cascade 模板文件路径
-		// 序列化：proto string
-		string _str_cascade_path;
-	};
-}
 
 namespace go88 {
 
@@ -139,5 +52,3 @@ namespace go88 {
 		static int PRETREATMENT(Mat frame, vector<Mat>& faces, vector<Rect> & rects, string model_path);
 	};
 }
-
-#endif // !GO88_LIB_H

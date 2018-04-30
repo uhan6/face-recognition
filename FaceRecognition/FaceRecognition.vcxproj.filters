@@ -13,54 +13,63 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="源文件\protobuf_entity">
-      <UniqueIdentifier>{9b9490ec-d4c4-4b76-a343-2524e7cc2585}</UniqueIdentifier>
-    </Filter>
     <Filter Include="源文件\just_test">
       <UniqueIdentifier>{3a418d2b-f764-4d09-915b-15a5b2a33a49}</UniqueIdentifier>
     </Filter>
     <Filter Include="源文件\face_recognition">
       <UniqueIdentifier>{0add8e5d-e559-4315-884d-b677ed001df0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="源文件\my_lib">
+    <Filter Include="源文件\lib">
       <UniqueIdentifier>{c6930098-92a6-4b3a-9660-f670238c9474}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\lib">
+      <UniqueIdentifier>{abdf190a-2350-4df6-851b-010b3aec52b3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="go88_lib.h">
+    <ClInclude Include="proj_com.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="my_proto.MsgCom.pb.h">
-      <Filter>头文件</Filter>
+    <ClInclude Include="go88_lib.h">
+      <Filter>头文件\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="tinyxml2.h">
+      <Filter>头文件\lib</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="my_proto.MsgCom.pb.cpp">
-      <Filter>源文件\protobuf_entity</Filter>
-    </ClCompile>
-    <ClCompile Include="opcv_test_capture.cpp">
-      <Filter>源文件\just_test</Filter>
-    </ClCompile>
-    <ClCompile Include="opcv_test_face.cpp">
-      <Filter>源文件\just_test</Filter>
-    </ClCompile>
-    <ClCompile Include="opcv_test_video.cpp">
-      <Filter>源文件\just_test</Filter>
-    </ClCompile>
-    <ClCompile Include="opcv_fr_main.cpp">
-      <Filter>源文件\face_recognition</Filter>
-    </ClCompile>
-    <ClCompile Include="opcv_fr_create_face.cpp">
-      <Filter>源文件\face_recognition</Filter>
-    </ClCompile>
-    <ClCompile Include="opcv_fr_check_face.cpp">
-      <Filter>源文件\face_recognition</Filter>
-    </ClCompile>
     <ClCompile Include="go88_lib.cpp">
-      <Filter>源文件\my_lib</Filter>
+      <Filter>源文件\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="tinyxml2.cpp">
+      <Filter>源文件\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="test_capture.cpp">
+      <Filter>源文件\just_test</Filter>
+    </ClCompile>
+    <ClCompile Include="test_face.cpp">
+      <Filter>源文件\just_test</Filter>
+    </ClCompile>
+    <ClCompile Include="test_video.cpp">
+      <Filter>源文件\just_test</Filter>
+    </ClCompile>
+    <ClCompile Include="xmltest.cpp">
+      <Filter>源文件\just_test</Filter>
+    </ClCompile>
+    <ClCompile Include="proj_com.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="fr_check_face.cpp">
+      <Filter>源文件\face_recognition</Filter>
+    </ClCompile>
+    <ClCompile Include="fr_create_face.cpp">
+      <Filter>源文件\face_recognition</Filter>
+    </ClCompile>
+    <ClCompile Include="fr_main.cpp">
+      <Filter>源文件\face_recognition</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
