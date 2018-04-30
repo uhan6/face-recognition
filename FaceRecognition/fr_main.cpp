@@ -15,8 +15,8 @@ int init() {
 	{
 		using namespace go88;
 		// 如果路径不存在，创建目录，把默认INS进行序列化 存储
-		if (!Utils::IS_EXIST_PATH(Com::SERIALIZATION_PATH)) {
-			Utils::CREATE_FOLDER(Utils::GET_FOLDER(Com::SERIALIZATION_PATH));
+		if (!Utils::IS_EXIST_PATH(Com::INS()->SERIALIZATION_PATH)) {
+			Utils::CREATE_FOLDER(Utils::GET_FOLDER(Com::INS()->SERIALIZATION_PATH));
 			Com::INS()->serialization();
 		}
 		else {

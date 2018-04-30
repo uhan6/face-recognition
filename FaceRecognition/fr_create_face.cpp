@@ -28,6 +28,7 @@ int create_new_face() {
 	// 图片索引
 	int i = 1;
 
+	string faces_folder = Com::INS()->FACES_FOLDER + name + "\\";
 	// 不存在人物，新增人物
 	if (!Com::INS()->is_exist_name(name)) {
 		// id , name
@@ -35,13 +36,12 @@ int create_new_face() {
 		// name , index
 		Com::INS()->get_name_index().insert(pair<string, int>(name, 1));
 		Com::INS()->set_num(Com::INS()->get_num() + 1);
+
+		go88::Utils::CREATE_FOLDER(faces_folder);
 	}
 	else {
 		i = Com::INS()->get_index(name);
 	}
-
-	string faces_folder = Com::FACES_FOLDER + name + "\\";
-	go88::Utils::CREATE_FOLDER(faces_folder);
 
 	cout << "按 p 拍照，按 q 退出拍照。" << endl;
 	Mat frame;
@@ -61,7 +61,7 @@ int create_new_face() {
 			faces.clear();
 			rects.clear();
 			// 如果没有人脸, 进行下一循环
-			if (!go88::Utils::PRETREATMENT(frame, faces, rects, Com::INS()->get_cascade_path())) {
+			if (!go88::Utils::PRETREATMENT(frame, faces, rects, Com::INS()->CASCADE_PATH)) {
 				continue;
 			}
 			if (faces.size() > 1) {
@@ -117,18 +117,24 @@ int train_model() {
 	//cout << "faces size  " << images.size() << "labels size  " << labels.size() << endl;
 
 	// 训练模型
-	Ptr<EigenFaceRecognizer> eigen_model = EigenFaceRecognizer::create(Com::INS()->get_num());
-	Ptr<FisherFaceRecognizer> fisher_model = FisherFaceRecognizer::create(Com::INS()->get_num());
-	Ptr<LBPHFaceRecognizer> lbphf_model = LBPHFaceRecognizer::create();
+	// * 暂时取消识别率不高的 eigen 和 fisher 
+	// 而采用 lbphf 来识别
+	//
+	//Ptr<EigenFaceRecognizer> eigen_model = EigenFaceRecognizer::create(Com::INS()->get_num());
+	//Ptr<FisherFaceRecognizer> fisher_model = FisherFaceRecognizer::create(Com::INS()->get_num());
+	Ptr<LBPHFaceRecognizer> lbph_model = LBPHFaceRecognizer::create();
 
-	eigen_model->train(images, labels);
-	fisher_model->train(images, labels);
-	lbphf_model->train(images, labels);
+	//eigen_model->train(images, labels);
+	//fisher_model->train(images, labels);
+	lbph_model->train(images, labels);
 
+	if (!go88::Utils::IS_EXIST_PATH("res\\model\\")) {
+		go88::Utils::CREATE_FOLDER("res\\model\\");
+	}
 	// 存储model
-	eigen_model->save("res/model/eigen_model.xml");
-	fisher_model->save("res/model/fisher_model.xml");
-	lbphf_model->save("res/model/lbphf_model.xml");
+	//eigen_model->save("res/model/eigen_model.xml");
+	//fisher_model->save("res/model/fisher_model.xml");
+	lbph_model->save("res/model/lbphf_model.xml");
 
 	return 1;
 }

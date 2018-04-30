@@ -27,6 +27,7 @@ struct ThreadParm
 	// thread 1
 	vector<Rect> *t1_rects;
 	vector<int> *t1_labels;
+	vector<float> *t1_cfds;
 
 	// thread over
 	int *t0_over;
@@ -56,6 +57,7 @@ int check_face() {
 	vector<Rect> t0_rects;
 	vector<Rect> t1_rects;
 	vector<int> t1_labels;
+	vector<float> t1_cfds;
 	int t0_over = 0;
 	int t1_over = 0;
 	// 平均帧
@@ -69,6 +71,7 @@ int check_face() {
 	tp->t0_rects = &t0_rects;
 	tp->t1_rects = &t1_rects;
 	tp->t1_labels = &t1_labels;
+	tp->t1_cfds = &t1_cfds;
 	tp->t0_over = &t0_over;
 	tp->t1_over = &t1_over;
 
@@ -92,6 +95,9 @@ int check_face() {
 	Mat frame;
 	vector<Rect> _rects;
 	vector<int> _labels;
+	vector<float> _cfds;
+	char * txt_delay = new char[20];
+	char * txt_name = new char[20];
 	cout << "按 q 退出检测" << endl;
 	while (i != -1) {
 		char key = waitKey(1);
@@ -106,19 +112,20 @@ int check_face() {
 
 			_rects.clear();
 			_labels.clear();
+			_cfds.clear();
 			// 取出 t1
 			EnterCriticalSection(&T1_SECTION);
 			_rects.assign((*tp->t1_rects).begin(), (*tp->t1_rects).end());
 			_labels.assign((*tp->t1_labels).begin(), (*tp->t1_labels).end());
+			_cfds.assign((*tp->t1_cfds).begin(), (*tp->t1_cfds).end());
 			LeaveCriticalSection(&T1_SECTION);
 
 			for (int i = 0; i < _rects.size(); i++) {
 				Point center(_rects[i].x + _rects[i].width*0.5, _rects[i].y + _rects[i].height*0.5);
 				ellipse(frame, center, Size(_rects[i].width*0.5, _rects[i].height*0.5), 0, 0, 360, Scalar(220, 90, 60), 3, 8, 0);
 
-				char * delay = new char[20];
-				sprintf(delay, "avg delay : %0.2f ms", *tp->avg_delay);
-				putText(frame, delay, Point(0, 25),
+				sprintf(txt_delay, "avg delay : %0.2f ms", *tp->avg_delay);
+				putText(frame, txt_delay, Point(0, 25),
 					FONT_HERSHEY_COMPLEX, 0.8, Scalar(0, 0, 0));
 				/*rectangle(frame, _rects[i], Scalar(0, 0, 255), 1);
 				string label = to_string(_rects[i].width) + " x " + to_string(_rects[i].height);
@@ -127,12 +134,20 @@ int check_face() {
 				cout << label << endl;*/
 
 				if (_labels[i] != -1) {
-					putText(frame, Com::INS()->get_name(_labels[i]), Point(_rects[i].x, _rects[i].y),
-						FONT_HERSHEY_COMPLEX, 1, Scalar(0, 0, 0));
+					if (_cfds[i] > Com::INS()->LBPH_PCT) {
+						sprintf(txt_name, " %s      %0.1f%%", Com::INS()->get_name(_labels[i]).c_str(), _cfds[i]);
+						putText(frame, txt_name, Point(_rects[i].x, _rects[i].y),
+							FONT_HERSHEY_COMPLEX, 1, Scalar(0, 255, 0));
+					}
+					else {
+						sprintf(txt_name, " %s      %0.1f%%", Com::INS()->get_name(_labels[i]).c_str(), _cfds[i]);
+						putText(frame, txt_name, Point(_rects[i].x, _rects[i].y),
+							FONT_HERSHEY_COMPLEX, 1, Scalar(0, 0, 255));
+					}
 				}
 				else {
 					putText(frame, "unknow", Point(_rects[i].x, _rects[i].y),
-						FONT_HERSHEY_COMPLEX, 1, Scalar(0, 0, 0));
+						FONT_HERSHEY_COMPLEX, 1, Scalar(0, 0, 255));
 				}
 			}
 
@@ -157,6 +172,13 @@ int check_face() {
 		Sleep(10);
 	}
 
+	delete[] txt_delay;
+	txt_delay = NULL;
+	delete[] txt_name;
+	txt_name = NULL;
+	delete tp;
+	tp = NULL;
+
 	return 1;
 }
 
@@ -171,7 +193,7 @@ void pretreatment_thread(ThreadParm *tp) {
 	vector<Rect> _rects;
 
 	CascadeClassifier face_cascade;
-	face_cascade.load(Com::INS()->get_cascade_path());
+	face_cascade.load(Com::INS()->CASCADE_PATH);
 
 	int _frame_id = 0;
 	while (_frame_id != -1) {
@@ -204,7 +226,9 @@ void pretreatment_thread(ThreadParm *tp) {
 			//	double scaleFactor = 1.1, 默认 1.1速度太低慢, 缩放 1.5准确率过低, 用 1.3
 			//	int minNeighbors = 3, 默认 3 表明至少有3次重叠检测，才认为人脸确实存在
 			//	int flags = 0, 新分类器已经不使用了
-			//	Size minSize = Size(), 人脸最小尺寸
+			//	Size minSize = Size(), 人脸最小尺寸 
+			//	100x100 能识别到较远距离的脸，但是速度较慢
+			//	150x150 能识别到中等距离，速度较快
 			//	Size maxSize = Size(), 人脸最大尺寸
 			face_cascade.detectMultiScale(_frame_gray, _rects, 1.3f, 3, 0, Size(150, 150), Size(400, 400));
 
@@ -240,19 +264,20 @@ void pretreatment_thread(ThreadParm *tp) {
 
 
 void modelpredict_thread(ThreadParm *tp) {
-	
-	// 结果
-	char * output = new char[50];
 
 	// 读取model
-	Ptr<EigenFaceRecognizer> eigen_model = EigenFaceRecognizer::load<EigenFaceRecognizer>("res/model/eigen_model.xml");
-	Ptr<FisherFaceRecognizer> fisher_model = FisherFaceRecognizer::load<FisherFaceRecognizer>("res/model/fisher_model.xml");
-	Ptr<LBPHFaceRecognizer> lbphf_model = LBPHFaceRecognizer::load<LBPHFaceRecognizer>("res/model/lbphf_model.xml");
+	// * 暂时取消识别率不高的 eigen 和 fisher 
+	// 而采用 lbphf 来识别
+	//
+	//Ptr<EigenFaceRecognizer> eigen_model = EigenFaceRecognizer::load<EigenFaceRecognizer>("res/model/eigen_model.xml");
+	//Ptr<FisherFaceRecognizer> fisher_model = FisherFaceRecognizer::load<FisherFaceRecognizer>("res/model/fisher_model.xml");
+	Ptr<LBPHFaceRecognizer> lbph_model = LBPHFaceRecognizer::load<LBPHFaceRecognizer>("res/model/lbphf_model.xml");
 
 	// 线程内暂存，线程安全
 	vector<Mat> _faces;
 	vector<Rect> _rects;
 	vector<int> _labels;
+	vector<float> _cfds;
 
 	int _frame_id = 0;
 	while (_frame_id != -1) {
@@ -266,6 +291,7 @@ void modelpredict_thread(ThreadParm *tp) {
 			_faces.clear();
 			_rects.clear();
 			_labels.clear();
+			_cfds.clear();
 			// 读取 t0 faces rects
 			EnterCriticalSection(&T0_SECTION);
 			_faces.assign((*tp->t0_faces).begin(), (*tp->t0_faces).end());
@@ -282,27 +308,27 @@ void modelpredict_thread(ThreadParm *tp) {
 
 			// 识别
 			for (int i = 0; i < predict_faces.size(); i++) {
-				int eigen_label = -1, fisher_label = -1, lbphf_label = -1;
-				double eigen_cfd = 0.0, fisher_cfd = 0.0, lbphf_cfd = 0.0;
-				eigen_model->predict(predict_faces[i], eigen_label, eigen_cfd);
-				fisher_model->predict(predict_faces[i], fisher_label, fisher_cfd);
-				lbphf_model->predict(predict_faces[i], lbphf_label, lbphf_cfd);
+				int eigen_label = -1, fisher_label = -1, lbph_label = -1;
+				double eigen_cfd = 0.0, fisher_cfd = 0.0, lbph_cfd = 0.0;
+				//eigen_model->predict(predict_faces[i], eigen_label, eigen_cfd);
+				//fisher_model->predict(predict_faces[i], fisher_label, fisher_cfd);
+				lbph_model->predict(predict_faces[i], lbph_label, lbph_cfd);
 
-				sprintf(output, "eigen : %d ~ %0.2f, fisher : %d ~ %0.2f, lbphf : %d ~ %0.2f", 
-					eigen_label, eigen_cfd, fisher_label, fisher_cfd, lbphf_label, lbphf_cfd);
-				cout << output << endl;
+				/*printf("eigen : %d ~ %0.2f, fisher : %d ~ %0.2f, lbph : %d ~ %0.2f\n", 
+					eigen_label, eigen_cfd, fisher_label, fisher_cfd, lbph_label, lbph_cfd);*/
+				
+				printf_s("lbph : %d ~ %0.2f\n", lbph_label, lbph_cfd);
 
-				int finaly_lb = -1;
-				if (eigen_label == fisher_label) {
-					finaly_lb = eigen_label;
-				}
-				else if (fisher_label == lbphf_label) {
-					finaly_lb = fisher_label;
-				}
-				else if (lbphf_label == eigen_label) {
-					finaly_lb = lbphf_label;
-				}
-				_labels.push_back(finaly_lb);
+				/*int finaly_lb = -1;
+				if (lbph_cfd >= Com::INS()->LBPH_PCT) {
+					finaly_lb = lbph_label;
+				}*/
+
+				// 为什么检测率会大于100.00
+				lbph_cfd = lbph_cfd > 100.00 ? 100.00 : lbph_cfd;
+
+				_labels.push_back(lbph_label);
+				_cfds.push_back(lbph_cfd);
 			}
 
 
@@ -312,6 +338,8 @@ void modelpredict_thread(ThreadParm *tp) {
 			(*tp->t1_rects).assign(_rects.begin(), _rects.end());
 			(*tp->t1_labels).clear();
 			(*tp->t1_labels).assign(_labels.begin(), _labels.end());
+			(*tp->t1_cfds).clear();
+			(*tp->t1_cfds).assign(_cfds.begin(), _cfds.end());
 			LeaveCriticalSection(&T1_SECTION);
 		}
 	}

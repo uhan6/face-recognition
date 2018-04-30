@@ -3,10 +3,17 @@
 
 namespace project_common {
 
+	Com* Com::_instance = NULL;
+
 
 	Com::Com() {
+		
+		this->SERIALIZATION_PATH = "D:\\opencv_faces\\common.xml";
+		this->FACES_FOLDER = "D:\\opencv_faces\\";
+		this->CASCADE_PATH = "res\haarcascade_frontalface_alt.xml";
+		this->LBPH_PCT = 70.00;
+
 		this->_int_num = 0;
-		this->_str_cascade_path = "res\\haarcascade_frontalface_alt.xml";
 	}
 
 
@@ -25,12 +32,6 @@ namespace project_common {
 	}
 
 
-	Com* Com::_instance = NULL;
-
-	const string Com::SERIALIZATION_PATH = "D:\\opencv_faces\\common.xml";
-	const string Com::FACES_FOLDER = "D:\\opencv_faces\\";
-
-
 	int Com::serialization() {
 		// 使用tinyxml2储存
 		XMLDocument doc;
@@ -40,13 +41,27 @@ namespace project_common {
 		doc.InsertEndChild(doc.NewComment("序列化存储 Com 类"));
 		root = doc.NewElement("Com");
 
+		ele = doc.NewElement("serial_path");
+		ele->InsertEndChild(doc.NewText((this->SERIALIZATION_PATH).c_str()));
+		root->InsertEndChild(ele);
+
+		ele = doc.NewElement("face_folder");
+		ele->InsertEndChild(doc.NewText((this->FACES_FOLDER).c_str()));
+		root->InsertEndChild(ele);
+
+		ele = doc.NewElement("cascade_path");
+		ele->InsertEndChild(doc.NewText(this->CASCADE_PATH.c_str()));
+		root->InsertEndChild(ele);
+
+		ele = doc.NewElement("lbph_pct");
+		ele->InsertEndChild(doc.NewText(to_string(this->LBPH_PCT).c_str()));
+		root->InsertEndChild(ele);
+
 		ele = doc.NewElement("num");
 		ele->InsertEndChild(doc.NewText(to_string(this->_int_num).c_str()));
 		root->InsertEndChild(ele);
 
-		ele = doc.NewElement("cascade_path");
-		ele->InsertEndChild(doc.NewText(this->_str_cascade_path.c_str()));
-		root->InsertEndChild(ele);
+
 
 
 		// 遍历 id_name map
@@ -123,11 +138,21 @@ namespace project_common {
 		XMLElement *root, *ele, *xml_pair;
 
 		root = doc.FirstChildElement("Com");
-		ele = root->FirstChildElement("num");
-		this->_int_num = atoi(ele->GetText());
+
+		ele = root->FirstChildElement("serial_path");
+		this->SERIALIZATION_PATH = ele->GetText();
+
+		ele = root->FirstChildElement("face_folder");
+		this->FACES_FOLDER = ele->GetText();
 
 		ele = root->FirstChildElement("cascade_path");
-		this->_str_cascade_path = ele->GetText();
+		this->CASCADE_PATH = ele->GetText();
+
+		ele = root->FirstChildElement("lbph_pct");
+		this->LBPH_PCT = atof(ele->GetText());
+
+		ele = root->FirstChildElement("num");
+		this->_int_num = atoi(ele->GetText());
 
 		// id_name
 		ele = root->FirstChildElement("id_name");
@@ -259,9 +284,5 @@ namespace project_common {
 		return this->_vct_images_labels;
 	}
 
-
-	string Com::get_cascade_path() {
-		return this->_str_cascade_path;
-	}
 
 }

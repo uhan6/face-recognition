@@ -20,12 +20,19 @@ namespace project_common {
 		// 得到 instance 实例 单例模式
 		static Com* INS();
 
+		// 这些量从 xml 文件中初始化
+		// <?>val</?>
 		// 序列化路径
-		static const string SERIALIZATION_PATH;
+		string SERIALIZATION_PATH;
 		// 人脸图片路径
-		static const string FACES_FOLDER;
+		string FACES_FOLDER;
+		// cascade 模板文件路径
+		string CASCADE_PATH;
+		// lbph 最低准确率
+		float LBPH_PCT;
 
-		// 序列化 路径为 PROTOPATH
+
+		// 序列化 路径为 SERIALIZATION_PATH
 		int serialization();
 		// 反序列化
 		int un_serialization();
@@ -63,8 +70,6 @@ namespace project_common {
 		// 照片路径和标签
 		vector<string>& get_img_lb();
 
-		// cascade 模板文件路径
-		string get_cascade_path();
 
 	private:
 		//单例模式构造函数私有
@@ -102,11 +107,5 @@ namespace project_common {
 		//					</name_index_pair>
 		//			   </images_labels>
 		vector<string> _vct_images_labels;
-
-		// cascade 模板文件路径
-		// 序列化：xml <cascade_path>
-		//					"path"
-		//			   </cascade_path>
-		string _str_cascade_path;
 	};
 }
