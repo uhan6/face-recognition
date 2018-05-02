@@ -19,6 +19,18 @@
                                                  \x64
     ```
 
+2. libfacedetection 人脸检测库（CopyRight by [ShiqiYu（MIT）](https://github.com/ShiqiYu/libfacedetection)）
+
+    在 OpenCVwithModules.props 里更改路径及配置
+
+    ```
+    默认目录: D:\Program Files\libfacedetection
+                                              \include
+                                              \lib
+    ```
+
+    把libfacedetect-x64.dll 复制到代码目录下
+
 ---
 
 提示：
