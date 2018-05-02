@@ -8,12 +8,12 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <Link>
-      <AdditionalDependencies>opencv_world341d.lib;libprotobufd.lib;libprotobuf-lited.lib;libprotocd.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>D:\Program Files\protobuf\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opencv_world341d.lib;libfacedetect-x64.lib;libfacedetect.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\Program Files\libfacedetection\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <ClCompile>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalIncludeDirectories>D:\Program Files\protobuf\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <AdditionalIncludeDirectories>D:\Program Files\libfacedetection\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup />

@@ -1,5 +1,6 @@
 #include "opencv2/opencv.hpp"
 #include "opencv2/face.hpp"
+#include "facedetect-dll.h"
 #include <windows.h>
 #include <thread>
 
@@ -184,6 +185,13 @@ int check_face() {
 
 void pretreatment_thread(ThreadParm *tp) {
 
+	// libfacedetect 的缓冲区大小
+	const int DETECT_BUFFER_SIZE = 0x20000;
+	// 结果
+	int * p_results = NULL;
+	//pBuffer指针用于检测函数。
+	unsigned char * p_buffer = (unsigned char *)malloc(DETECT_BUFFER_SIZE);
+
 	// 计算delay
 	int delay_time = 0;
 	int delay_num = 0;
@@ -220,7 +228,7 @@ void pretreatment_thread(ThreadParm *tp) {
 
 			//	*** 需要优化，此步骤耗时过长 ***
 			//  
-			//	在摄像头 480 x 640 像素下参数: 平均 40-50 ms
+			//	在摄像头 640 x 480 像素下参数: 平均 40-50 ms
 			//	InputArray image, 输入
 			//	CV_OUT std::vector<Rect>& objects, 存放人脸位置
 			//	double scaleFactor = 1.1, 默认 1.1速度太低慢, 缩放 1.5准确率过低, 用 1.3
@@ -230,7 +238,13 @@ void pretreatment_thread(ThreadParm *tp) {
 			//	100x100 能识别到较远距离的脸，但是速度较慢
 			//	150x150 能识别到中等距离，速度较快
 			//	Size maxSize = Size(), 人脸最大尺寸
-			face_cascade.detectMultiScale(_frame_gray, _rects, 1.3f, 3, 0, Size(150, 150), Size(400, 400));
+			//face_cascade.detectMultiScale(_frame_gray, _rects, 1.3f, 3, 0, Size(150, 150), Size(400, 400));
+
+
+			// 使用 libfacedection 的 facedetect_multiview
+			// 在 go88_lib 中封装
+			go88::Utils::FACEDETECT_MULTIVIEW(_frame_gray, _rects, 1.2f, 3, 100, 400, 0);
+			
 
 			// 计算平均延迟
 			if (_rects.size() > 0) {
@@ -257,8 +271,18 @@ void pretreatment_thread(ThreadParm *tp) {
 			(*tp->t0_rects).clear();
 			(*tp->t0_rects).assign(_rects.begin(), _rects.end());
 			LeaveCriticalSection(&T0_SECTION);
+
+			p_results = NULL;
+
+			imshow("gray", _frame_gray);
+			waitKey(10);
 		}
 	}
+
+	delete p_results;
+	delete[] p_buffer;
+	p_results = NULL;
+	p_buffer = NULL;
 	*tp->t0_over = 1;
 }
 
@@ -314,9 +338,9 @@ void modelpredict_thread(ThreadParm *tp) {
 				//fisher_model->predict(predict_faces[i], fisher_label, fisher_cfd);
 				lbph_model->predict(predict_faces[i], lbph_label, lbph_cfd);
 
-				/*printf("eigen : %d ~ %0.2f, fisher : %d ~ %0.2f, lbph : %d ~ %0.2f\n", 
+				/*printf("eigen : %d ~ %0.2f, fisher : %d ~ %0.2f, lbph : %d ~ %0.2f\n",
 					eigen_label, eigen_cfd, fisher_label, fisher_cfd, lbph_label, lbph_cfd);*/
-				
+
 				printf_s("lbph : %d ~ %0.2f\n", lbph_label, lbph_cfd);
 
 				/*int finaly_lb = -1;

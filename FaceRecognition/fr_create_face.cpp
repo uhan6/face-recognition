@@ -107,10 +107,17 @@ int train_model() {
 	vector<Mat> images;
 	vector<int> labels;
 
+	Mat img;
 	// 读取照片和标签
 	for (int i = 0; i < Com::INS()->get_img_lb().size(); i++) {
 		vector<string> vct = go88::Utils::SPLIT(Com::INS()->get_img_lb()[i], ';');
-		images.push_back(imread(vct[0], 0));
+		
+		// 因为存储的是原图，读取后要进行转灰度和直方均衡
+		img = imread(vct[0]);
+		cvtColor(img, img, CV_BGR2GRAY);
+		equalizeHist(img, img);
+
+		images.push_back(img);
 		labels.push_back(stoi(vct[1]));
 	}
 

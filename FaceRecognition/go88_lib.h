@@ -1,6 +1,7 @@
 #pragma once
 
 #include "opencv2/opencv.hpp"
+#include "facedetect-dll.h"
 #include <iostream>
 #include <io.h>
 
@@ -22,7 +23,7 @@ namespace go88 {
 		static vector<string> SPLIT(const string s, char delim);
 
 		// 判断路径是否存在，文件和目录都可以判断
-		static int IS_EXIST_PATH(string path);      
+		static int IS_EXIST_PATH(string path);
 
 		// 从路径中获得文件夹路径
 		static string GET_FOLDER(string path);
@@ -50,5 +51,15 @@ namespace go88 {
 		// 引用：vector<Mat> faces 人脸图像
 		//		 vector<Rect> rects 人脸图像在 frame 的位置 Rect
 		static int PRETREATMENT(Mat frame, vector<Mat>& faces, vector<Rect> & rects, string model_path);
+
+		// 人脸检测函数
+		// 对 libfacedetect 中 facedetect_multiview 函数进行封装
+		//		float scale,	scale factor for scan windows
+		//		int min_neighbors,	how many neighbors each candidate rectangle should have to retain it
+		//		int min_object_width,	Minimum possible face size. Faces smaller than that are ignored.
+		//		int max_object_width = 0,	Maximum possible face size. Faces larger than that are ignored. It is the largest posible when max_object_width=0.
+		//		int doLandmark = 0	landmark detection
+		static void FACEDETECT_MULTIVIEW(Mat &frame_gray, vector<Rect> &face_rects, float scale = 1.1f,
+			int min_neighbors = 3, int min_object_width = 48, int max_object_width = 0, int doLandmark = 0);
 	};
 }
