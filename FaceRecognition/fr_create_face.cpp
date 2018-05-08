@@ -4,6 +4,7 @@
 #include "proj_com.h"
 #include "go88_lib.h"
 
+
 using namespace std;
 using namespace cv;
 using namespace cv::face;

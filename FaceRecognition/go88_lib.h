@@ -2,8 +2,9 @@
 
 #include "opencv2/opencv.hpp"
 #include "facedetect-dll.h"
+
 #include <iostream>
-#include <io.h>
+#include <io.h>		// _access() 函数头文件
 
 
 using namespace cv;

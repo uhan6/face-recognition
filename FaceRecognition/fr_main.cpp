@@ -3,9 +3,10 @@
 #include "proj_com.h"
 #include "go88_lib.h"
 
-using namespace cv;
+
 using namespace std;
 using namespace project_common;
+
 
 int create_new_face();
 int check_face();

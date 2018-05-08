@@ -33,6 +33,29 @@
 
 ---
 
+目录介绍：
+```
+头文件\
+      lib\
+          go88_lib.h    // 自己写的工具函数
+          tinyxml2.h    // tniyxml 函数库，用于序列化读写 xml
+      proj_com.h        // 程序的公共环境变量和程序数据，Com 类进行序列化与反序列化
+源文件\
+      face_recognition\
+                       fr_main  // 在 main() 中被调用
+                       fr_create_face   // 记录人脸并训练模型
+                                        // 只训练模型：可以输入已存在的 name，然后直接 q 退出拍照，就可以只训练模型
+                       fr_check_face    // 检测人脸，用到了多线程
+
+      just_test\    // 测试摄像头等等
+      lib\          // lib 的具体实现
+      proj_com.cpp  // com 类的实现
+      
+      main.cpp      // 程序入口
+```
+
+---
+
 提示：
 
     程序第一次运行时会在"D:\opencv_faces\"目录下生成 common.xml ，这个文件是项目的Com公共变量以及项目的设置，在这里修改参数。
