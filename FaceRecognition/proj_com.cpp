@@ -3,13 +3,15 @@
 
 namespace project_common {
 
+	mutex COM_MTX;
+
 	Com* Com::_instance = NULL;
 
 
 	Com::Com() {
-		
-		this->SERIALIZATION_PATH = "D:\\opencv_faces\\common.xml";
-		this->FACES_FOLDER = "D:\\opencv_faces\\";
+
+		this->SERIALIZATION_PATH = "D:\\opencv_faces_ocv\\common.xml";
+		this->FACES_FOLDER = "D:\\opencv_faces_ocv\\";
 		this->CASCADE_PATH = "res\haarcascade_frontalface_alt.xml";
 		this->LBPH_PCT = 70.00;
 
@@ -20,13 +22,13 @@ namespace project_common {
 	// Com 类中成员、变量初始化
 	Com* Com::INS() {
 		if (Com::_instance == NULL) {
-			_lock_locales();
-			//lock()
+
+			COM_MTX.lock();
 			if (Com::_instance == NULL) {
-			Com::_instance = new Com();
+				Com::_instance = new Com();
 			}
-			//unlock()
-			_unlock_locales();
+			COM_MTX.unlock();
+
 		}
 		return Com::_instance;
 	}
