@@ -8,12 +8,21 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <Link>
+<<<<<<< HEAD
       <AdditionalDependencies>opencv_world341d.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <ClCompile>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+=======
+      <AdditionalDependencies>opencv_world341d.lib;libfacedetect-x64.lib;libfacedetect.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\Program Files\libfacedetection\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+    <ClCompile>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <AdditionalIncludeDirectories>D:\Program Files\libfacedetection\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+>>>>>>> dev-libface
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup />

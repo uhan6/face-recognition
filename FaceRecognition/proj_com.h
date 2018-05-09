@@ -1,7 +1,10 @@
 #pragma once
 
 #include "opencv2/opencv.hpp"
-#include "tinyxml2.h"
+
+#include <mutex>	// 互斥锁
+
+#include "tinyxml2.h"	// 序列化时的写 xml 的库
 
 #include "go88_lib.h"
 
@@ -9,6 +12,9 @@
 using namespace cv;
 using namespace std;
 using namespace tinyxml2;
+
+
+mutex COM_MTX;
 
 
 namespace project_common {
