@@ -106,22 +106,13 @@ namespace go88 {
 	}
 
 
-	int Utils::PRETREATMENT(Mat frame, vector<Mat>& faces, vector<Rect> & rects, string model_path) {
+	int Utils::PRETREATMENT(Mat frame, vector<Mat>& faces, vector<Rect> & rects) {
 		Mat _frame = frame.clone();
 
-		CascadeClassifier face_cascade;
-		face_cascade.load(model_path);
-
-		// 转为灰度图
+		// 转为灰度图，均值化
 		Mat _frame_gray;
 		cvtColor(_frame, _frame_gray, CV_BGR2GRAY);
 		equalizeHist(_frame_gray, _frame_gray);
-
-		// *** 需要优化，此步骤耗时过长
-		//
-		// 识别人脸
-		//face_cascade.detectMultiScale(_frame_gray, rects);
-
 
 		// 使用 libfacedection 的 facedetect_multiview
 		// 在 go88_lib 中封装

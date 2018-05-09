@@ -3,6 +3,8 @@
 
 namespace project_common {
 
+	mutex COM_MTX;
+
 	Com* Com::_instance = NULL;
 
 
@@ -10,7 +12,6 @@ namespace project_common {
 
 		this->SERIALIZATION_PATH = "D:\\opencv_faces\\common.xml";
 		this->FACES_FOLDER = "D:\\opencv_faces\\";
-		this->CASCADE_PATH = "res\haarcascade_frontalface_alt.xml";
 		this->LBPH_PCT = 70.00;
 
 		this->_int_num = 0;
@@ -49,10 +50,6 @@ namespace project_common {
 
 		ele = doc.NewElement("face_folder");
 		ele->InsertEndChild(doc.NewText((this->FACES_FOLDER).c_str()));
-		root->InsertEndChild(ele);
-
-		ele = doc.NewElement("cascade_path");
-		ele->InsertEndChild(doc.NewText(this->CASCADE_PATH.c_str()));
 		root->InsertEndChild(ele);
 
 		ele = doc.NewElement("lbph_pct");
@@ -146,9 +143,6 @@ namespace project_common {
 
 		ele = root->FirstChildElement("face_folder");
 		this->FACES_FOLDER = ele->GetText();
-
-		ele = root->FirstChildElement("cascade_path");
-		this->CASCADE_PATH = ele->GetText();
 
 		ele = root->FirstChildElement("lbph_pct");
 		this->LBPH_PCT = atof(ele->GetText());

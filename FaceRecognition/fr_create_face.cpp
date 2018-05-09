@@ -62,7 +62,7 @@ int create_new_face() {
 			faces.clear();
 			rects.clear();
 			// 如果没有人脸, 进行下一循环
-			if (!go88::Utils::PRETREATMENT(frame, faces, rects, Com::INS()->CASCADE_PATH)) {
+			if (!go88::Utils::PRETREATMENT(frame, faces, rects)) {
 				continue;
 			}
 			if (faces.size() > 1) {
@@ -72,7 +72,7 @@ int create_new_face() {
 
 			// 存储人脸照片
 			imwrite(faces_path, faces[0]);
-			Com::INS()->set_index(name, i+1);
+			Com::INS()->set_index(name, i + 1);
 
 			// 存储标签
 			Com::INS()->get_img_lb().push_back(faces_path + ";" + to_string(Com::INS()->get_id(name)));
@@ -112,7 +112,7 @@ int train_model() {
 	// 读取照片和标签
 	for (int i = 0; i < Com::INS()->get_img_lb().size(); i++) {
 		vector<string> vct = go88::Utils::SPLIT(Com::INS()->get_img_lb()[i], ';');
-		
+
 		// 因为存储的是原图，读取后要进行转灰度和直方均衡
 		img = imread(vct[0]);
 		cvtColor(img, img, CV_BGR2GRAY);

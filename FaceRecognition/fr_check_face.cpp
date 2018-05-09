@@ -227,25 +227,10 @@ void pretreatment_thread(ThreadParm *tp) {
 			clock_t start;
 			start = clock();
 
-			//	*** 需要优化，此步骤耗时过长 ***
-			//  
-			//	在摄像头 640 x 480 像素下参数: 平均 40-50 ms
-			//	InputArray image, 输入
-			//	CV_OUT std::vector<Rect>& objects, 存放人脸位置
-			//	double scaleFactor = 1.1, 默认 1.1速度太低慢, 缩放 1.5准确率过低, 用 1.3
-			//	int minNeighbors = 3, 默认 3 表明至少有3次重叠检测，才认为人脸确实存在
-			//	int flags = 0, 新分类器已经不使用了
-			//	Size minSize = Size(), 人脸最小尺寸 
-			//	100x100 能识别到较远距离的脸，但是速度较慢
-			//	150x150 能识别到中等距离，速度较快
-			//	Size maxSize = Size(), 人脸最大尺寸
-			//face_cascade.detectMultiScale(_frame_gray, _rects, 1.3f, 3, 0, Size(150, 150), Size(400, 400));
-
-
 			// 使用 libfacedection 的 facedetect_multiview
 			// 在 go88_lib 中封装
+			// 摄像头 640 x 480 平均延迟 20 ms
 			go88::Utils::FACEDETECT_MULTIVIEW(_frame_gray, _rects, 1.2f, 3, 100, 400, 0);
-			
 
 			// 计算平均延迟
 			if (_rects.size() > 0) {
@@ -295,7 +280,7 @@ void modelpredict_thread(ThreadParm *tp) {
 
 	// 读取model
 	// * 暂时取消识别率不高的 eigen 和 fisher 
-	// 而采用 lbphf 来识别
+	// 而采用 lbph 来识别
 	//
 	//Ptr<EigenFaceRecognizer> eigen_model = EigenFaceRecognizer::load<EigenFaceRecognizer>("res/model/eigen_model.xml");
 	//Ptr<FisherFaceRecognizer> fisher_model = FisherFaceRecognizer::load<FisherFaceRecognizer>("res/model/fisher_model.xml");
@@ -354,7 +339,7 @@ void modelpredict_thread(ThreadParm *tp) {
 
 				printf_s("lbph : %d ~ %0.2f\n", lbph_label, lbph_cfd);
 
-				// 为什么检测率会大于100.00
+				// TODO: 为什么检测率会大于100.00
 				lbph_cfd = lbph_cfd > 100.00 ? 100.00 : lbph_cfd;
 
 				_labels.push_back(lbph_label);

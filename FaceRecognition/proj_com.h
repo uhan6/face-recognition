@@ -14,9 +14,6 @@ using namespace std;
 using namespace tinyxml2;
 
 
-mutex COM_MTX;
-
-
 namespace project_common {
 
 
@@ -32,8 +29,6 @@ namespace project_common {
 		string SERIALIZATION_PATH;
 		// 人脸图片路径
 		string FACES_FOLDER;
-		// cascade 模板文件路径
-		string CASCADE_PATH;
 		// lbph 最低准确率
 		float LBPH_PCT;
 
