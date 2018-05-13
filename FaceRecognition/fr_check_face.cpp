@@ -26,6 +26,7 @@ struct ThreadParm
 	Mat *frame;
 	vector<Mat> *t0_faces;
 	vector<Rect> *t0_rects;
+	vector<Point> *t0_points;
 
 	// thread 1
 	vector<Rect> *t1_rects;
@@ -57,6 +58,7 @@ int check_face() {
 	int frame_id = 0;
 	vector<Mat> t0_faces;
 	vector<Rect> t0_rects;
+	vector<Point> t0_points;
 	vector<Rect> t1_rects;
 	vector<int> t1_labels;
 	vector<float> t1_cfds;
@@ -71,6 +73,7 @@ int check_face() {
 	tp->frame = &cap_frame;
 	tp->t0_faces = &t0_faces;
 	tp->t0_rects = &t0_rects;
+	tp->t0_points = &t0_points;
 	tp->t1_rects = &t1_rects;
 	tp->t1_labels = &t1_labels;
 	tp->t1_cfds = &t1_cfds;
@@ -96,6 +99,7 @@ int check_face() {
 	vector<Rect> _rects;
 	vector<int> _labels;
 	vector<float> _cfds;
+	vector<Point> _points;
 	// 作为 sprintf() 的输出
 	char * txt_delay = new char[20];
 	char * txt_name = new char[20];
@@ -115,7 +119,17 @@ int check_face() {
 			_rects.clear();
 			_labels.clear();
 			_cfds.clear();
+			_points.clear();
 
+			// 取出 t0
+			T0_MTX.lock();
+
+			if ( (*tp->t0_points).size() > 0 ) {
+				_points.assign((*tp->t0_points).begin(), (*tp->t0_points).end());
+			}
+
+			T0_MTX.unlock();
+			
 			// 取出 t1
 			T1_MTX.lock();
 
@@ -134,6 +148,10 @@ int check_face() {
 				putText(frame, txt_delay, Point(0, 25),
 					FONT_HERSHEY_COMPLEX, 0.8, Scalar(0, 0, 0));
 
+				// 显示 marks
+				for (int m = 0; m < _points.size(); m++) {
+					circle(frame, _points[m], 1, Scalar(0, 255, 0));
+				}
 
 				if (_labels[i] != -1) {
 					if (_cfds[i] > Com::INS()->LBPH_PCT) {
@@ -199,6 +217,7 @@ void pretreatment_thread(ThreadParm *tp) {
 	// 线程内暂存，线程安全
 	vector<Mat> _faces;
 	vector<Rect> _rects;
+	vector<Point> _points;
 
 	// 加载 opencv 分类器
 	//CascadeClassifier face_cascade;
@@ -214,6 +233,7 @@ void pretreatment_thread(ThreadParm *tp) {
 
 			_faces.clear();
 			_rects.clear();
+			_points.clear();
 
 			// 从 frame 中获取人脸
 			Mat _frame = (*tp->frame).clone();
@@ -230,7 +250,7 @@ void pretreatment_thread(ThreadParm *tp) {
 			// 使用 libfacedection 的 facedetect_multiview
 			// 在 go88_lib 中封装
 			// 摄像头 640 x 480 平均延迟 20 ms
-			go88::Utils::FACEDETECT_MULTIVIEW(_frame_gray, _rects, 1.2f, 3, 100, 400, 0);
+			_points = go88::Utils::FACEDETECT_MULTIVIEW(_frame_gray, _rects, 1.2f, 3, 100, 400, 1);
 
 			// 计算平均延迟
 			if (_rects.size() > 0) {
@@ -258,6 +278,8 @@ void pretreatment_thread(ThreadParm *tp) {
 			(*tp->t0_faces).assign(_faces.begin(), _faces.end());
 			(*tp->t0_rects).clear();
 			(*tp->t0_rects).assign(_rects.begin(), _rects.end());
+			(*tp->t0_points).clear();
+			(*tp->t0_points).assign(_points.begin(), _points.end());
 
 			T0_MTX.unlock();
 

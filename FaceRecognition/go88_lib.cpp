@@ -129,7 +129,7 @@ namespace go88 {
 	}
 
 
-	void Utils::FACEDETECT_MULTIVIEW(Mat &frame_gray, vector<Rect> &face_rects, float scale,
+	vector<Point> Utils::FACEDETECT_MULTIVIEW(Mat &frame_gray, vector<Rect> &face_rects, float scale,
 		int min_neighbors, int min_object_width, int max_object_width, int doLandmark) {
 
 		// libfacedetect 的缓冲区大小, 不要更改
@@ -139,14 +139,25 @@ namespace go88 {
 		//pBuffer指针用于检测函数。
 		unsigned char * p_buffer = (unsigned char *)malloc(DETECT_BUFFER_SIZE);
 
+		vector<Point> _points;
+
 		int cols = frame_gray.cols;
 		int rows = frame_gray.rows;
 
 		p_results = facedetect_multiview(p_buffer, (unsigned char*)(frame_gray.ptr(0)),
 			cols, rows, (int)frame_gray.step, scale, min_neighbors, min_object_width, max_object_width, doLandmark);
 
-		for (int i = 0; i < (p_results ? *p_results : 0); i++)
-		{
+
+		// p_results 结构说明
+		// int * p_results 是一块连续内存，默认指向前 4 位，显示人脸数量
+		//
+		// |头地址|        每一张脸用 142 个 short 存储  142 * 2 位    | -> 下一张脸 142 * 2 bit |
+		// | int  |                     short                         |
+		// |1 * 4 |         6 * 2         |          136 * 2		  |	bit
+		// [  num ][p0][p1][p2][p3][p4][p5][  68 marks     68 * 4     ]
+
+		for (int i = 0; i < (p_results ? *p_results : 0); i++) {
+			//                    去掉头地址
 			short * p = ((short*)(p_results + 1)) + 142 * i;
 			int x = p[0];
 			int y = p[1];
@@ -161,8 +172,16 @@ namespace go88 {
 			w = (x + w <= cols) ? w : (cols - x);
 			h = (y + h <= rows) ? h : (rows - y);
 
+			if (doLandmark) {
+				for (int j = 0; j < 68; j++) {
+					_points.push_back(Point((int)p[6 + 2 * j], (int)p[6 + 2 * j + 1]));
+				}
+			}
+
 			face_rects.push_back(Rect(x, y, w, h));
 		}
+
+		return _points;
 	}
 
 

@@ -58,7 +58,9 @@ namespace go88 {
 		//		int min_object_width,	Minimum possible face size. Faces smaller than that are ignored.
 		//		int max_object_width = 0,	Maximum possible face size. Faces larger than that are ignored. It is the largest posible when max_object_width=0.
 		//		int doLandmark = 0	landmark detection
-		static void FACEDETECT_MULTIVIEW(Mat &frame_gray, vector<Rect> &face_rects, float scale = 1.1f,
+		//
+		// 返回值 68 个 marks 的位置
+		static vector<Point> FACEDETECT_MULTIVIEW(Mat &frame_gray, vector<Rect> &face_rects, float scale = 1.1f,
 			int min_neighbors = 3, int min_object_width = 48, int max_object_width = 0, int doLandmark = 0);
 	};
 }

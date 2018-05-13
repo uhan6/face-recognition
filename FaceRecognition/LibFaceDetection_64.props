@@ -3,16 +3,14 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
-    <IncludePath>D:\Program Files\opencv_with_modules\include;D:\Program Files\opencv_with_modules\include\opencv;D:\Program Files\opencv_with_modules\include\opencv2;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\Program Files\opencv_with_modules\x64\vc15\lib;$(LibraryPath)</LibraryPath>
+    <_PropertySheetDisplayName>LibFaceDetection_64</_PropertySheetDisplayName>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <Link>
-      <AdditionalDependencies>opencv_world341d.lib;libfacedetect-x64.lib;libfacedetect.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libfacedetect-x64.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>D:\Program Files\libfacedetection\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <ClCompile>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <AdditionalIncludeDirectories>D:\Program Files\libfacedetection\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
